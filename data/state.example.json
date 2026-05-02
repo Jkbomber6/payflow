@@ -1,0 +1,61 @@
+{
+  "settings": {
+    "income": 8000,
+    "startTime": "09:00",
+    "endTime": "17:00",
+    "target": 5000,
+    "mode": "double",
+    "customDays": 22
+  },
+  "goals": [
+    {
+      "name": "奶茶徽章",
+      "price": 15,
+      "icon": "🥤",
+      "bg": "#fff4d8"
+    },
+    {
+      "name": "午饭补给",
+      "price": 30,
+      "icon": "🍱",
+      "bg": "#eaf6ff"
+    },
+    {
+      "name": "打车券",
+      "price": 50,
+      "icon": "🚕",
+      "bg": "#ffe6ef"
+    },
+    {
+      "name": "会员卡",
+      "price": 68,
+      "icon": "🎬",
+      "bg": "#e9fff6"
+    },
+    {
+      "name": "游戏补给",
+      "price": 198,
+      "icon": "🎮",
+      "bg": "#eef0ff"
+    },
+    {
+      "name": "漂亮衣服",
+      "price": 300,
+      "icon": "👕",
+      "bg": "#fff4d8"
+    },
+    {
+      "name": "房租堡垒",
+      "price": 3000,
+      "icon": "🏠",
+      "bg": "#eaf6ff"
+    },
+    {
+      "name": "旅行岛屿",
+      "price": 5000,
+      "icon": "🏝️",
+      "bg": "#ffe6ef"
+    }
+  ],
+  "updatedAt": null
+}

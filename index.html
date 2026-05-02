@@ -1,0 +1,1638 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Salary / Second 工资存档</title>
+  <style>
+    :root {
+      --blue: #156bff;
+      --blue-deep: #0b4ed6;
+      --navy: #102a5c;
+      --sky: #eaf6ff;
+      --white: #ffffff;
+      --soft: #f8fbff;
+      --gray-blue: #8a96a8;
+      --line: #d9e8ff;
+      --yellow: #ffd84d;
+      --pink: #ff6fae;
+      --mint: #7ee6b8;
+      --cream: #fff4d8;
+      --peach: #ffe6ef;
+      --radius-xl: 34px;
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --shadow-soft: 0 14px 34px rgba(16, 42, 92, 0.12);
+      --shadow-blue: 0 18px 38px rgba(21, 107, 255, 0.22);
+      --shadow-button: 0 9px 0 #0a3ea8, 0 18px 30px rgba(21, 107, 255, 0.24);
+      --font: "Arial Rounded MT Bold", "Trebuchet MS", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--sky);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--navy);
+      font-family: var(--font);
+      background:
+        linear-gradient(90deg, rgba(21, 107, 255, 0.055) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(21, 107, 255, 0.055) 1px, transparent 1px),
+        radial-gradient(circle at 12% 14%, rgba(255, 216, 77, 0.34) 0 74px, transparent 75px),
+        radial-gradient(circle at 91% 10%, rgba(126, 230, 184, 0.34) 0 86px, transparent 88px),
+        linear-gradient(180deg, #f2fbff 0%, #eaf6ff 58%, #fff7e5 100%);
+      background-size: 30px 30px, 30px 30px, auto, auto, auto;
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .page {
+      position: relative;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 26px 0 52px;
+    }
+
+    .page::before,
+    .page::after {
+      content: "";
+      position: fixed;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .page::before {
+      top: 94px;
+      left: max(18px, calc((100vw - 1180px) / 2 - 48px));
+      width: 132px;
+      height: 58px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 22% 50%, #fff 0 26px, transparent 27px),
+        radial-gradient(circle at 50% 38%, #fff 0 34px, transparent 35px),
+        radial-gradient(circle at 78% 52%, #fff 0 27px, transparent 28px);
+      opacity: 0.86;
+      filter: drop-shadow(0 10px 16px rgba(16, 42, 92, 0.08));
+    }
+
+    .page::after {
+      right: max(18px, calc((100vw - 1180px) / 2 - 34px));
+      bottom: 78px;
+      width: 118px;
+      height: 44px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 24% 52%, rgba(255,255,255,0.9) 0 20px, transparent 21px),
+        radial-gradient(circle at 52% 40%, rgba(255,255,255,0.9) 0 28px, transparent 29px),
+        radial-gradient(circle at 78% 54%, rgba(255,255,255,0.9) 0 21px, transparent 22px);
+      opacity: 0.78;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--navy);
+      font-weight: 1000;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      position: relative;
+      display: grid;
+      width: 54px;
+      height: 54px;
+      place-items: center;
+      border: 4px solid var(--white);
+      border-radius: 18px;
+      color: var(--blue);
+      background: var(--yellow);
+      box-shadow: 0 8px 0 rgba(16, 42, 92, 0.12);
+      transform: rotate(-3deg);
+    }
+
+    .logo-mark::after {
+      content: "★";
+      position: absolute;
+      right: -8px;
+      top: -12px;
+      color: var(--pink);
+      font-size: 1.1rem;
+      text-shadow: 0 2px 0 var(--white);
+    }
+
+    .logo-title {
+      display: grid;
+      line-height: 1.05;
+    }
+
+    .logo-title strong {
+      font-size: 1.2rem;
+    }
+
+    .logo-title span {
+      color: var(--gray-blue);
+      font-size: 0.74rem;
+      letter-spacing: 0;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      border: 2px solid rgba(21, 107, 255, 0.12);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .nav a,
+    .avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--navy);
+      font-size: 0.86rem;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .nav a:first-child {
+      color: var(--white);
+      background: var(--blue);
+    }
+
+    .avatar {
+      width: 38px;
+      padding: 0;
+      color: var(--blue);
+      background: var(--cream);
+      border: 2px solid var(--white);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(290px, 380px);
+      gap: 26px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .hero-copy {
+      position: relative;
+      padding: 10px 0;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      min-height: 34px;
+      padding: 6px 14px;
+      border: 2px solid var(--white);
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--cream);
+      box-shadow: 0 7px 0 rgba(16, 42, 92, 0.09);
+      font-weight: 1000;
+    }
+
+    .hero h1 {
+      margin: 16px 0 8px;
+      color: var(--blue);
+      font-size: clamp(3.6rem, 11vw, 7.9rem);
+      line-height: 0.86;
+      letter-spacing: 0;
+      text-shadow: 0 6px 0 var(--white), 0 18px 28px rgba(21, 107, 255, 0.13);
+    }
+
+    .hero h2 {
+      margin: 0;
+      color: var(--navy);
+      font-size: clamp(1.9rem, 4vw, 3.4rem);
+      line-height: 1.08;
+    }
+
+    .hero p {
+      max-width: 620px;
+      margin: 14px 0 0;
+      color: #52637a;
+      font-size: 1.04rem;
+      line-height: 1.8;
+      font-weight: 800;
+    }
+
+    .live-rate {
+      position: relative;
+      min-height: 316px;
+      padding: 24px;
+      border: 4px solid var(--white);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.72), rgba(255,244,216,0.9)),
+        var(--cream);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .live-rate::before {
+      content: "COIN";
+      position: absolute;
+      top: 18px;
+      right: -8px;
+      padding: 9px 16px;
+      border: 3px solid var(--white);
+      border-radius: 999px;
+      color: var(--navy);
+      background: var(--yellow);
+      box-shadow: 0 7px 0 rgba(16, 42, 92, 0.1);
+      font-size: 0.78rem;
+      font-weight: 1000;
+      transform: rotate(9deg);
+    }
+
+    .live-kicker {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--gray-blue);
+      font-size: 0.84rem;
+      font-weight: 1000;
+    }
+
+    .live-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 0 7px rgba(126, 230, 184, 0.22);
+      animation: pulse 1.8s ease-out infinite;
+    }
+
+    .today-money {
+      margin: 18px 0 6px;
+      color: var(--blue);
+      font-size: clamp(3.6rem, 8vw, 5.8rem);
+      line-height: 0.9;
+      font-weight: 1000;
+      overflow-wrap: anywhere;
+    }
+
+    .rate-line {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.05rem;
+      font-weight: 1000;
+    }
+
+    .status-note {
+      display: inline-flex;
+      width: fit-content;
+      margin: 12px 0 0;
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--blue);
+      background: rgba(255,255,255,0.72);
+      font-size: 0.82rem;
+      font-weight: 1000;
+      box-shadow: inset 0 -3px 0 rgba(21, 107, 255, 0.08);
+    }
+
+    .mini-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .mini-stat {
+      min-height: 78px;
+      padding: 12px;
+      border: 2px solid rgba(21, 107, 255, 0.12);
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+    }
+
+    .mini-stat span {
+      display: block;
+      color: var(--gray-blue);
+      font-size: 0.78rem;
+      font-weight: 1000;
+    }
+
+    .mini-stat strong {
+      display: block;
+      margin-top: 5px;
+      color: var(--navy);
+      font-size: 1.12rem;
+      overflow-wrap: anywhere;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: minmax(320px, 470px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .folder-stack {
+      display: grid;
+      gap: 0;
+    }
+
+    .folder-card {
+      position: relative;
+      width: 100%;
+      margin-top: -12px;
+      border-radius: var(--radius-xl);
+      color: var(--gray-blue);
+      text-align: left;
+      transition: transform 220ms ease, filter 220ms ease;
+    }
+
+    .folder-card:first-child {
+      margin-top: 0;
+    }
+
+    .folder-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .folder-trigger:focus-visible,
+    .chip:focus-visible,
+    .game-button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 4px solid rgba(255, 111, 174, 0.36);
+      outline-offset: 3px;
+    }
+
+    .folder-inner {
+      position: relative;
+      min-height: 128px;
+      padding: 22px;
+      border: 4px solid var(--white);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: 0 10px 22px rgba(16, 42, 92, 0.08);
+      transition: min-height 240ms ease, background 220ms ease, box-shadow 220ms ease;
+      overflow: hidden;
+    }
+
+    .folder-trigger {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      width: 100%;
+      gap: 14px;
+      padding: 0;
+      border: 0;
+      color: inherit;
+      background: transparent;
+      text-align: left;
+    }
+
+    .folder-inner::before {
+      content: "";
+      position: absolute;
+      left: 24px;
+      top: -4px;
+      width: 118px;
+      height: 28px;
+      border: 4px solid var(--white);
+      border-bottom: 0;
+      border-radius: 20px 20px 0 0;
+      background: inherit;
+    }
+
+    .folder-card.active {
+      z-index: 3;
+      color: var(--white);
+      transform: translateY(-4px) scale(1.01);
+    }
+
+    .folder-card.active .folder-inner {
+      min-height: 276px;
+      background:
+        radial-gradient(circle at 84% 20%, rgba(255,255,255,0.18) 0 54px, transparent 55px),
+        linear-gradient(160deg, #2a7dff 0%, var(--blue) 68%, #0d58e6 100%);
+      box-shadow: var(--shadow-blue);
+    }
+
+    .folder-card.active .folder-inner::after {
+      content: "已选择";
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 7px 12px;
+      border: 3px solid var(--white);
+      border-radius: 999px;
+      color: var(--white);
+      background: var(--pink);
+      box-shadow: 0 5px 0 rgba(16, 42, 92, 0.15);
+      font-size: 0.78rem;
+      font-weight: 1000;
+    }
+
+    .folder-head {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 14px;
+      align-items: center;
+    }
+
+    .folder-number {
+      display: grid;
+      width: 64px;
+      height: 64px;
+      place-items: center;
+      border-radius: 22px;
+      color: var(--blue);
+      background: var(--cream);
+      font-size: 1.55rem;
+      font-weight: 1000;
+      box-shadow: inset 0 -5px 0 rgba(255, 216, 77, 0.35);
+    }
+
+    .folder-card.active .folder-number {
+      color: var(--navy);
+      background: var(--yellow);
+    }
+
+    .folder-title {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .folder-title strong {
+      color: var(--navy);
+      font-size: 1.28rem;
+      line-height: 1.1;
+    }
+
+    .folder-title span,
+    .folder-preview {
+      color: var(--gray-blue);
+      font-size: 0.8rem;
+      font-weight: 1000;
+    }
+
+    .folder-card.active .folder-title strong,
+    .folder-card.active .folder-title span,
+    .folder-card.active .folder-preview {
+      color: var(--white);
+    }
+
+    .folder-preview {
+      position: relative;
+      z-index: 1;
+      margin: 14px 0 0;
+      line-height: 1.45;
+    }
+
+    .folder-content {
+      position: relative;
+      z-index: 1;
+      display: none;
+      margin-top: 22px;
+    }
+
+    .folder-card.active .folder-content {
+      display: grid;
+      gap: 14px;
+    }
+
+    .field-label {
+      display: grid;
+      gap: 8px;
+      color: inherit;
+      font-size: 0.84rem;
+      font-weight: 1000;
+    }
+
+    .field-label span {
+      color: currentColor;
+      opacity: 0.86;
+    }
+
+    .input-shell,
+    .time-picker,
+    .custom-days {
+      border: 3px solid rgba(255,255,255,0.82);
+      border-radius: 24px;
+      background: rgba(255,255,255,0.16);
+      box-shadow: inset 0 -5px 0 rgba(16, 42, 92, 0.08);
+    }
+
+    .input-shell {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+    }
+
+    .currency {
+      color: var(--yellow);
+      font-size: 2.2rem;
+      line-height: 1;
+      font-weight: 1000;
+      text-shadow: 0 3px 0 rgba(16, 42, 92, 0.12);
+    }
+
+    input,
+    select {
+      width: 100%;
+      min-height: 48px;
+      border: 2px solid rgba(21, 107, 255, 0.16);
+      border-radius: 18px;
+      padding: 10px 12px;
+      color: var(--navy);
+      background: var(--white);
+      box-shadow: inset 0 -3px 0 rgba(21, 107, 255, 0.08);
+      outline: none;
+      font-weight: 1000;
+    }
+
+    #income {
+      min-height: 64px;
+      border: 0;
+      padding: 0;
+      color: var(--white);
+      background: transparent;
+      box-shadow: none;
+      font-size: clamp(2.2rem, 7vw, 4.8rem);
+      line-height: 1;
+    }
+
+    #income::placeholder {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .helper {
+      margin: 0;
+      color: currentColor;
+      opacity: 0.82;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      font-weight: 900;
+    }
+
+    .time-picker {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: end;
+      padding: 14px;
+    }
+
+    .time-unit {
+      display: grid;
+      gap: 7px;
+      color: rgba(255,255,255,0.84);
+      font-size: 0.78rem;
+      font-weight: 1000;
+    }
+
+    .time-arrow {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      margin-bottom: 2px;
+      border-radius: 50%;
+      color: var(--navy);
+      background: var(--yellow);
+      box-shadow: 0 5px 0 rgba(16, 42, 92, 0.12);
+      font-weight: 1000;
+    }
+
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .chip {
+      position: relative;
+      min-height: 54px;
+      border: 3px solid rgba(255,255,255,0.86);
+      border-radius: 18px;
+      color: var(--white);
+      background: rgba(255,255,255,0.15);
+      box-shadow: inset 0 -4px 0 rgba(16, 42, 92, 0.08);
+      font-weight: 1000;
+      transition: transform 180ms ease, background 180ms ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-2px);
+    }
+
+    .chip.active {
+      color: var(--navy);
+      background: var(--white);
+    }
+
+    .chip.active::after {
+      content: "✓";
+      position: absolute;
+      top: -10px;
+      right: -7px;
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border: 3px solid var(--white);
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--pink);
+      box-shadow: 0 4px 0 rgba(16, 42, 92, 0.12);
+      font-size: 0.9rem;
+    }
+
+    .custom-days {
+      display: none;
+      padding: 12px;
+    }
+
+    .custom-days.show {
+      display: block;
+    }
+
+    .game-button {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      min-height: 66px;
+      margin-top: 18px;
+      border: 4px solid var(--white);
+      border-radius: 999px;
+      color: var(--white);
+      background: var(--blue);
+      box-shadow: var(--shadow-button);
+      font-size: 1.15rem;
+      font-weight: 1000;
+      transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
+    }
+
+    .game-button::before {
+      content: "➜";
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--navy);
+      background: var(--yellow);
+      box-shadow: inset 0 -4px 0 rgba(16, 42, 92, 0.12);
+    }
+
+    .game-button:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.05);
+    }
+
+    .game-button:active {
+      transform: translateY(6px);
+      box-shadow: 0 3px 0 #0a3ea8, 0 10px 18px rgba(21, 107, 255, 0.18);
+    }
+
+    .privacy-note {
+      margin: 14px 0 0;
+      color: var(--gray-blue);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .dashboard {
+      display: grid;
+      gap: 18px;
+    }
+
+    .save-panel {
+      position: relative;
+      padding: 22px;
+      border: 4px solid var(--white);
+      border-radius: var(--radius-xl);
+      background: var(--white);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+
+    .save-panel::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 2px dashed rgba(21, 107, 255, 0.15);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .panel-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .panel-head h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 1.35rem;
+      line-height: 1.15;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 34px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      color: var(--blue);
+      background: var(--cream);
+      font-size: 0.8rem;
+      font-weight: 1000;
+    }
+
+    .progress-wrap {
+      position: relative;
+      z-index: 1;
+      margin: 18px 0;
+      padding: 8px;
+      border: 3px solid var(--line);
+      border-radius: 999px;
+      background: #f3f8ff;
+    }
+
+    .progress-fill {
+      width: 0%;
+      min-height: 28px;
+      border-radius: 999px;
+      background: repeating-linear-gradient(135deg, var(--yellow) 0 16px, #ffbe3d 16px 32px);
+      box-shadow: inset 0 5px 0 rgba(255,255,255,0.42);
+      transition: width 260ms ease;
+    }
+
+    .stat-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat-card {
+      min-height: 92px;
+      padding: 13px;
+      border: 2px solid rgba(21, 107, 255, 0.12);
+      border-radius: 22px;
+      background: #f8fbff;
+    }
+
+    .stat-card span {
+      display: block;
+      color: var(--gray-blue);
+      font-size: 0.78rem;
+      font-weight: 1000;
+    }
+
+    .stat-card strong {
+      display: block;
+      margin-top: 7px;
+      color: var(--navy);
+      font-size: 1.16rem;
+      overflow-wrap: anywhere;
+    }
+
+    .goals-section {
+      display: grid;
+      gap: 14px;
+    }
+
+    .goals {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .goal-card {
+      position: relative;
+      min-height: 174px;
+      padding: 14px;
+      border: 4px solid var(--white);
+      border-radius: 26px;
+      color: var(--navy);
+      background: var(--goal-bg, var(--cream));
+      box-shadow: 0 10px 22px rgba(16, 42, 92, 0.08);
+      overflow: hidden;
+    }
+
+    .goal-card.locked {
+      filter: saturate(0.72);
+    }
+
+    .goal-card::before {
+      content: "";
+      position: absolute;
+      top: -20px;
+      right: -12px;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.52);
+    }
+
+    .goal-icon {
+      position: relative;
+      display: grid;
+      width: 46px;
+      height: 46px;
+      place-items: center;
+      border-radius: 16px;
+      background: var(--white);
+      box-shadow: inset 0 -4px 0 rgba(16, 42, 92, 0.08);
+      font-size: 1.35rem;
+    }
+
+    .goal-card h4 {
+      position: relative;
+      margin: 12px 0 5px;
+      font-size: 1rem;
+      line-height: 1.2;
+    }
+
+    .goal-card p {
+      position: relative;
+      margin: 0;
+      color: #52637a;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      font-weight: 900;
+    }
+
+    .goal-price {
+      position: absolute;
+      top: 16px;
+      right: 14px;
+      z-index: 1;
+      color: var(--blue);
+      font-size: 0.88rem;
+      font-weight: 1000;
+    }
+
+    .small-meter {
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
+      height: 12px;
+      padding: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.62);
+    }
+
+    .small-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .custom-goal {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(110px, 0.55fr) auto;
+      gap: 10px;
+    }
+
+    .custom-goal button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 18px;
+      color: var(--white);
+      background: var(--pink);
+      box-shadow: 0 5px 0 rgba(180, 45, 100, 0.38);
+      font-weight: 1000;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 20px;
+      z-index: 20;
+      min-width: min(360px, calc(100% - 32px));
+      padding: 14px 18px;
+      border: 3px solid var(--white);
+      border-radius: 999px;
+      color: var(--white);
+      background: var(--navy);
+      box-shadow: var(--shadow-soft);
+      text-align: center;
+      font-weight: 1000;
+      transform: translate(-50%, 160%);
+      transition: transform 220ms ease;
+    }
+
+    .toast.show {
+      transform: translate(-50%, 0);
+    }
+
+    .sticker {
+      position: absolute;
+      z-index: 0;
+      display: grid;
+      place-items: center;
+      border: 3px solid var(--white);
+      box-shadow: 0 8px 0 rgba(16, 42, 92, 0.08);
+      font-weight: 1000;
+      pointer-events: none;
+    }
+
+    .sticker.star {
+      top: 122px;
+      right: 42%;
+      width: 38px;
+      height: 38px;
+      border-radius: 13px;
+      color: var(--navy);
+      background: var(--yellow);
+      transform: rotate(12deg);
+    }
+
+    .sticker.heart {
+      right: 12px;
+      top: 222px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--pink);
+      transform: rotate(-8deg);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.92); opacity: 0.78; }
+      55% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(0.92); opacity: 0.78; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .live-rate {
+        min-height: auto;
+      }
+
+      .goals {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 16px;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav {
+        width: 100%;
+        justify-content: space-between;
+        overflow-x: auto;
+      }
+
+      .nav a {
+        flex: 0 0 auto;
+      }
+
+      .hero h1 {
+        font-size: clamp(3.1rem, 18vw, 5.4rem);
+      }
+
+      .folder-inner,
+      .save-panel,
+      .live-rate {
+        padding: 18px;
+        border-radius: 26px;
+      }
+
+      .folder-card.active .folder-inner {
+        min-height: auto;
+      }
+
+      .folder-head {
+        grid-template-columns: 54px minmax(0, 1fr);
+      }
+
+      .folder-number {
+        width: 54px;
+        height: 54px;
+        border-radius: 18px;
+        font-size: 1.25rem;
+      }
+
+      .time-picker,
+      .stat-grid,
+      .mini-stats,
+      .custom-goal {
+        grid-template-columns: 1fr;
+      }
+
+      .time-arrow {
+        width: 100%;
+        height: 32px;
+        margin: 0;
+        border-radius: 999px;
+        transform: rotate(90deg);
+      }
+
+      .chips,
+      .goals {
+        grid-template-columns: 1fr;
+      }
+
+      .sticker {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <span class="sticker star" aria-hidden="true">★</span>
+    <span class="sticker heart" aria-hidden="true">♥</span>
+
+    <header class="topbar">
+      <a class="logo" href="#" aria-label="Salary Second 首页">
+        <span class="logo-mark">¥</span>
+        <span class="logo-title">
+          <strong>PAYFLOW</strong>
+          <span>cute salary save file</span>
+        </span>
+      </a>
+      <nav class="nav" aria-label="页面导航">
+        <a href="#calculator">计算器</a>
+        <a href="#goals">奖励图鉴</a>
+        <a href="#about">关于</a>
+        <span class="avatar" aria-hidden="true">☺</span>
+      </nav>
+    </header>
+
+    <section class="hero" id="about">
+      <div class="hero-copy">
+        <span class="pill">实时计算 / REAL-TIME</span>
+        <h1>SALARY<br>/ SECOND</h1>
+        <h2>实时记录每秒工资</h2>
+        <p>输入你的月薪、上班时间和每月工时，把一天的工作进度变成一个可爱的工资游戏存档。</p>
+      </div>
+
+      <aside class="live-rate" aria-label="今日收入卡片">
+        <div class="live-kicker"><span class="live-dot" aria-hidden="true"></span>实时更新中</div>
+        <div class="today-money" id="todayMoney">¥0.00</div>
+        <p class="rate-line" id="perSecond">当前每秒收入 ¥0.0000</p>
+        <p class="status-note" id="workStatus">等待计算状态</p>
+        <div class="mini-stats">
+          <div class="mini-stat">
+            <span>每分钟</span>
+            <strong id="minuteRate">¥0.00</strong>
+          </div>
+          <div class="mini-stat">
+            <span>每小时</span>
+            <strong id="hourRate">¥0.00</strong>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="app-shell" id="calculator">
+      <div>
+        <div class="folder-stack" aria-label="工资信息设置">
+          <section class="folder-card active" data-folder="salary">
+            <div class="folder-inner">
+              <button class="folder-trigger" type="button" aria-pressed="true">
+                <span class="folder-head">
+                  <span class="folder-number">01</span>
+                  <span class="folder-title">
+                    <strong>月薪</strong>
+                    <span>MONTHLY SALARY</span>
+                  </span>
+                </span>
+                <span class="folder-preview" id="salaryPreview">税前月薪 ¥8,000.00</span>
+              </button>
+              <div class="folder-content">
+                <label class="field-label">
+                  <span>税前月薪（人民币 CNY）</span>
+                  <span class="input-shell">
+                    <span class="currency">¥</span>
+                    <input id="income" type="number" min="0" step="100" value="8000" inputmode="decimal" aria-label="税前月薪" />
+                  </span>
+                </label>
+                <p class="helper">请输入你的税前月薪总额，页面只在本地用于计算。</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="folder-card" data-folder="hours">
+            <div class="folder-inner">
+              <button class="folder-trigger" type="button" aria-pressed="false">
+                <span class="folder-head">
+                  <span class="folder-number">02</span>
+                  <span class="folder-title">
+                    <strong>上班时间</strong>
+                    <span>WORK HOURS</span>
+                  </span>
+                </span>
+                <span class="folder-preview" id="timePreview">09:00 → 17:00，总计 8 小时/天</span>
+              </button>
+              <div class="folder-content">
+                <span class="time-picker">
+                  <label class="time-unit">
+                    开始时间
+                    <select id="startTime" aria-label="开始时间"></select>
+                  </label>
+                  <span class="time-arrow" aria-hidden="true">→</span>
+                  <label class="time-unit">
+                    结束时间
+                    <select id="endTime" aria-label="结束时间"></select>
+                  </label>
+                </span>
+                <p class="helper" id="workHoursNote">总计 8 小时/天。今日收入会从开始时间算到当前真实时间。</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="folder-card" data-folder="schedule">
+            <div class="folder-inner">
+              <button class="folder-trigger" type="button" aria-pressed="false">
+                <span class="folder-head">
+                  <span class="folder-number">03</span>
+                  <span class="folder-title">
+                    <strong>每月工时</strong>
+                    <span>MONTHLY SCHEDULE</span>
+                  </span>
+                </span>
+                <span class="folder-preview" id="schedulePreview">双休冒险中，每月约 21.75 天</span>
+              </button>
+              <div class="folder-content">
+                <span class="chips" role="group" aria-label="工作节奏">
+                  <button class="chip active" type="button" data-mode="double">双休</button>
+                  <button class="chip" type="button" data-mode="bigSmall">大小周</button>
+                  <button class="chip" type="button" data-mode="single">单休</button>
+                  <button class="chip" type="button" data-mode="custom">自定义</button>
+                </span>
+                <label class="field-label custom-days" id="customDaysWrap">
+                  <span>每月投入天数</span>
+                  <input id="customDays" type="number" min="1" max="31" step="1" value="22" aria-label="每月投入天数" />
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <button class="game-button" id="startButton" type="button">开始计算 / START</button>
+        <p class="privacy-note">数据仅用于本地计算，不会存储或分享你的个人信息。</p>
+      </div>
+
+      <div class="dashboard">
+        <section class="save-panel" aria-label="今日收入进度">
+          <div class="panel-head">
+            <h3>今日收入能量</h3>
+            <span class="badge" id="workModeBadge">双休冒险中</span>
+          </div>
+          <div class="progress-wrap" aria-label="长期目标进度">
+            <div class="progress-fill" id="targetFill"></div>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <span>目标金额</span>
+              <strong><input id="target" type="number" min="1" step="100" value="5000" aria-label="目标金额" /></strong>
+            </div>
+            <div class="stat-card">
+              <span>目标进度</span>
+              <strong id="targetProgress">0%</strong>
+            </div>
+            <div class="stat-card">
+              <span>下一枚徽章</span>
+              <strong id="nextUnlock">计算中</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="save-panel goals-section" id="goals" aria-label="奖励图鉴">
+          <div class="panel-head">
+            <h3>奖励图鉴</h3>
+            <span class="badge" id="encourage">把时间变成选择权</span>
+          </div>
+          <div class="goals" id="goalsGrid"></div>
+          <div class="custom-goal">
+            <input id="customName" aria-label="奖励名称" placeholder="例如：演唱会门票" />
+            <input id="customPrice" aria-label="奖励金额" type="number" min="1" placeholder="金额" />
+            <button id="addGoal" type="button">添加</button>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const workModes = {
+      double: { label: "双休冒险中", days: 21.75 },
+      bigSmall: { label: "大小周冲刺中", days: 24 },
+      single: { label: "单休挑战中", days: 26 },
+      custom: { label: "自定义路线中", days: 22 }
+    };
+
+    const encouragements = [
+      "今天也在稳定升级",
+      "金币没有停，动力也没有停",
+      "这不是小钱，是掌控感在增加",
+      "再前进一点点，徽章就亮了",
+      "每一秒都算数"
+    ];
+
+    const defaultGoals = [
+      { name: "奶茶徽章", price: 15, icon: "🥤", bg: "#fff4d8" },
+      { name: "午饭补给", price: 30, icon: "🍱", bg: "#eaf6ff" },
+      { name: "打车券", price: 50, icon: "🚕", bg: "#ffe6ef" },
+      { name: "会员卡", price: 68, icon: "🎬", bg: "#e9fff6" },
+      { name: "游戏补给", price: 198, icon: "🎮", bg: "#eef0ff" },
+      { name: "漂亮衣服", price: 300, icon: "👕", bg: "#fff4d8" },
+      { name: "房租堡垒", price: 3000, icon: "🏠", bg: "#eaf6ff" },
+      { name: "旅行岛屿", price: 5000, icon: "🏝️", bg: "#ffe6ef" }
+    ];
+
+    let goals = [...defaultGoals];
+    let mode = "double";
+    let lastUnlocked = new Set();
+    let toastTimer;
+    let saveTimer;
+    let isHydrating = false;
+
+    const $ = (id) => document.getElementById(id);
+    const apiEnabled = window.location.protocol !== "file:";
+    const money = (value, digits = 2) => `¥${value.toLocaleString("zh-CN", {
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits
+    })}`;
+    const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+    function minutesToTime(minutes) {
+      const hours = String(Math.floor(minutes / 60)).padStart(2, "0");
+      const mins = String(minutes % 60).padStart(2, "0");
+      return `${hours}:${mins}`;
+    }
+
+    function timeToMinutes(value) {
+      const [hours, minutes] = value.split(":").map(Number);
+      return hours * 60 + minutes;
+    }
+
+    function formatHours(hours) {
+      return Number.isInteger(hours) ? `${hours} 小时` : `${hours.toFixed(1)} 小时`;
+    }
+
+    function buildTimeOptions() {
+      const options = [];
+      for (let minutes = 0; minutes < 24 * 60; minutes += 30) {
+        const value = minutesToTime(minutes);
+        options.push(`<option value="${value}">${value}</option>`);
+      }
+
+      $("startTime").innerHTML = options.join("");
+      $("endTime").innerHTML = options.join("");
+      $("startTime").value = "09:00";
+      $("endTime").value = "17:00";
+    }
+
+    function getDailyHours() {
+      const startMinutes = timeToMinutes($("startTime").value);
+      const endMinutes = timeToMinutes($("endTime").value);
+      let duration = endMinutes - startMinutes;
+
+      if (duration <= 0) duration += 24 * 60;
+      return clamp(duration / 60, 0.5, 24);
+    }
+
+    function getWorkdayElapsedSeconds(now = new Date()) {
+      return getWorkdayProgress(now).elapsedSeconds;
+    }
+
+    function getWorkdayProgress(now = new Date()) {
+      const startMinutes = timeToMinutes($("startTime").value);
+      const endMinutes = timeToMinutes($("endTime").value);
+      let durationMinutes = endMinutes - startMinutes;
+      const currentMinutes = now.getHours() * 60
+        + now.getMinutes()
+        + now.getSeconds() / 60
+        + now.getMilliseconds() / 60000;
+
+      if (durationMinutes <= 0) durationMinutes += 24 * 60;
+
+      let elapsedMinutes = currentMinutes - startMinutes;
+      if (elapsedMinutes < 0 && endMinutes <= startMinutes) {
+        elapsedMinutes += 24 * 60;
+      }
+
+      const clampedMinutes = clamp(elapsedMinutes, 0, durationMinutes);
+      let status = "工作中，金币正在跳动";
+
+      if (elapsedMinutes <= 0) {
+        status = `还没到开始时间，${$("startTime").value} 开始累计`;
+      } else if (elapsedMinutes >= durationMinutes) {
+        status = `已到结束时间，今日收入已按 ${$("endTime").value} 封顶`;
+      }
+
+      return {
+        elapsedSeconds: clampedMinutes * 60,
+        totalSeconds: durationMinutes * 60,
+        status
+      };
+    }
+
+    function getSettings() {
+      const income = Math.max(0, Number($("income").value) || 0);
+      const hours = getDailyHours();
+      const target = Math.max(1, Number($("target").value) || 1);
+      const days = mode === "custom"
+        ? clamp(Number($("customDays").value) || 22, 1, 31)
+        : workModes[mode].days;
+      const monthlyHours = Math.max(1, days * hours);
+      const perHour = income / monthlyHours;
+      const perSecond = perHour / 3600;
+
+      $("salaryPreview").textContent = `税前月薪 ${money(income)}`;
+      $("timePreview").textContent = `${$("startTime").value} → ${$("endTime").value}，总计 ${formatHours(hours)}/天`;
+      $("workHoursNote").textContent = `总计 ${formatHours(hours)}/天。今日收入会从开始时间算到当前真实时间。`;
+      $("schedulePreview").textContent = `${workModes[mode].label}，每月约 ${days} 天`;
+      $("workModeBadge").textContent = workModes[mode].label;
+
+      return { income, hours, target, days, monthlyHours, perHour, perSecond };
+    }
+
+    function timeText(seconds) {
+      if (!Number.isFinite(seconds) || seconds <= 0) return "已解锁";
+      if (seconds < 60) return `${Math.ceil(seconds)} 秒`;
+      const minutes = Math.floor(seconds / 60);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+      if (days > 0) return `${days} 天 ${hours % 24} 小时`;
+      if (hours > 0) return `${hours} 小时 ${minutes % 60} 分钟`;
+      return `${minutes} 分钟`;
+    }
+
+    function showToast(message) {
+      const toast = $("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function getStateSnapshot() {
+      return {
+        settings: {
+          income: Math.max(0, Number($("income").value) || 0),
+          startTime: $("startTime").value,
+          endTime: $("endTime").value,
+          target: Math.max(1, Number($("target").value) || 1),
+          mode,
+          customDays: clamp(Number($("customDays").value) || 22, 1, 31)
+        },
+        goals
+      };
+    }
+
+    function applyState(state) {
+      if (!state || !state.settings) return;
+
+      isHydrating = true;
+      $("income").value = state.settings.income ?? 8000;
+      $("startTime").value = state.settings.startTime || "09:00";
+      $("endTime").value = state.settings.endTime || "17:00";
+      $("target").value = state.settings.target ?? 5000;
+      $("customDays").value = state.settings.customDays ?? 22;
+      mode = state.settings.mode || "double";
+      goals = Array.isArray(state.goals) && state.goals.length ? state.goals : [...defaultGoals];
+
+      document.querySelectorAll(".chip").forEach((chip) => {
+        chip.classList.toggle("active", chip.dataset.mode === mode);
+      });
+      $("customDaysWrap").classList.toggle("show", mode === "custom");
+      refreshUnlocks();
+      isHydrating = false;
+    }
+
+    async function loadState() {
+      if (!apiEnabled) return;
+
+      try {
+        const response = await fetch("/api/state");
+        if (!response.ok) throw new Error("state request failed");
+        applyState(await response.json());
+      } catch (error) {
+        showToast("后端暂时没有连接，当前使用页面默认数据。");
+      }
+    }
+
+    async function saveStateNow() {
+      if (!apiEnabled || isHydrating) return;
+
+      try {
+        await fetch("/api/state", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(getStateSnapshot())
+        });
+      } catch (error) {
+        showToast("保存失败：请确认本地后端服务正在运行。");
+      }
+    }
+
+    function scheduleSave() {
+      if (!apiEnabled || isHydrating) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveStateNow, 350);
+    }
+
+    function renderGoals(earned, perSecond) {
+      const goalsGrid = $("goalsGrid");
+      goalsGrid.innerHTML = "";
+      let nextGoal = null;
+
+      goals.forEach((goal) => {
+        const progress = clamp((earned / goal.price) * 100, 0, 100);
+        const unlocked = progress >= 100;
+        const remaining = Math.max(0, goal.price - earned);
+        const wait = remaining / Math.max(perSecond, 0.0000001);
+        const card = document.createElement("article");
+
+        card.className = `goal-card ${unlocked ? "" : "locked"}`;
+        card.style.setProperty("--goal-bg", goal.bg || "#fff4d8");
+        card.innerHTML = `
+          <div class="goal-price">${money(goal.price, 0)}</div>
+          <div class="goal-icon" aria-hidden="true">${goal.icon}</div>
+          <h4>${goal.name}</h4>
+          <p>${unlocked ? "已获得这份购买力" : `还需 ${timeText(wait)} 解锁`}</p>
+          <div class="small-meter"><div class="small-fill" style="width:${progress}%"></div></div>
+        `;
+        goalsGrid.appendChild(card);
+
+        if (unlocked && !lastUnlocked.has(goal.name)) {
+          lastUnlocked.add(goal.name);
+          showToast(`解锁成功：你获得了 ${goal.name} 的购买力！`);
+        }
+
+        if (!unlocked && !nextGoal) {
+          nextGoal = { ...goal, wait };
+        }
+      });
+
+      $("nextUnlock").textContent = nextGoal ? `${nextGoal.name} ${timeText(nextGoal.wait)}` : "全图鉴点亮";
+    }
+
+    function tick(now) {
+      const settings = getSettings();
+      const workday = getWorkdayProgress();
+      const elapsed = workday.elapsedSeconds;
+      const earned = settings.perSecond * elapsed;
+      const targetProgress = clamp((earned / settings.target) * 100, 0, 100);
+
+      $("todayMoney").textContent = money(earned);
+      $("perSecond").textContent = `当前每秒收入 ${money(settings.perSecond, 4)}`;
+      $("workStatus").textContent = workday.status;
+      $("minuteRate").textContent = money(settings.perSecond * 60);
+      $("hourRate").textContent = money(settings.perHour);
+      $("targetProgress").textContent = `${targetProgress.toFixed(1)}%`;
+      $("targetFill").style.width = `${targetProgress}%`;
+      $("encourage").textContent = encouragements[Math.floor(now / 4200) % encouragements.length];
+      renderGoals(earned, settings.perSecond);
+      requestAnimationFrame(tick);
+    }
+
+    function refreshUnlocks() {
+      lastUnlocked = new Set();
+    }
+
+    document.querySelectorAll(".folder-trigger").forEach((trigger) => {
+      trigger.addEventListener("click", () => {
+        const folder = trigger.closest(".folder-card");
+        document.querySelectorAll(".folder-card").forEach((item) => {
+          item.classList.remove("active");
+          item.querySelector(".folder-trigger").setAttribute("aria-pressed", "false");
+        });
+        folder.classList.add("active");
+        trigger.setAttribute("aria-pressed", "true");
+      });
+    });
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", (event) => {
+        event.stopPropagation();
+        document.querySelectorAll(".chip").forEach((item) => item.classList.remove("active"));
+        chip.classList.add("active");
+        mode = chip.dataset.mode;
+        $("customDaysWrap").classList.toggle("show", mode === "custom");
+        refreshUnlocks();
+        scheduleSave();
+      });
+    });
+
+    buildTimeOptions();
+    loadState();
+
+    ["income", "startTime", "endTime", "target", "customDays"].forEach((id) => {
+      $(id).addEventListener("input", () => {
+        refreshUnlocks();
+        scheduleSave();
+      });
+      $(id).addEventListener("change", () => {
+        refreshUnlocks();
+        scheduleSave();
+      });
+    });
+
+    $("startButton").addEventListener("click", () => {
+      refreshUnlocks();
+      saveStateNow();
+      showToast("工资存档已刷新，开始挂机计算！");
+    });
+
+    $("addGoal").addEventListener("click", () => {
+      const name = $("customName").value.trim();
+      const price = Number($("customPrice").value);
+      if (!name || !price || price <= 0) {
+        showToast("给新奖励取个名字，再填上金额就能加入图鉴。");
+        return;
+      }
+
+      goals.push({ name, price, icon: "⭐", bg: "#e9fff6" });
+      $("customName").value = "";
+      $("customPrice").value = "";
+      scheduleSave();
+      showToast(`新奖励加入：${name}`);
+    });
+
+    requestAnimationFrame(tick);
+  </script>
+</body>
+</html>

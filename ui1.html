@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PayFlow - 卡比风格工资秒表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary-blue: #156BFF;
+            --deep-navy: #102A5C;
+            --sky-bg: #EAF6FF;
+            --star-yellow: #FFD84D;
+            --candy-pink: #FF6FAE;
+            --mint-green: #7EE6B8;
+        }
+
+        body {
+            font-family: 'Fredoka', "Microsoft YaHei", sans-serif;
+            background-color: var(--sky-bg);
+            color: var(--deep-navy);
+            background-image: radial-gradient(circle, #D0E8FF 1px, transparent 1px);
+            background-size: 30px 30px;
+            min-height: 100 screen;
+        }
+
+        /* 核心卡片容器 */
+        .card-wrapper {
+            perspective: 1000px;
+        }
+
+        .game-card {
+            background: white;
+            border-radius: 40px;
+            border: 8px solid white;
+            box-shadow: 0 20px 40px rgba(21, 107, 255, 0.15);
+            position: relative;
+            transition: transform 0.3s ease;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+        }
+
+        /* 顶部徽章 */
+        .badge-circle {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 6px solid white;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+        }
+
+        /* 底部倾斜横幅 */
+        .banner-ribbon {
+            position: absolute;
+            bottom: 40px;
+            left: -10px;
+            right: -10px;
+            padding: 12px 0;
+            transform: rotate(-3deg);
+            box-shadow: 0 8px 0px rgba(0,0,0,0.1);
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* 内容区样式 */
+        .card-content {
+            padding: 70px 24px 100px 24px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 输入框美化 */
+        .cute-input {
+            background: #F0F7FF;
+            border: 3px solid transparent;
+            border-radius: 20px;
+            padding: 12px 16px;
+            width: 100%;
+            font-weight: 700;
+            color: var(--primary-blue);
+            transition: all 0.2s;
+        }
+        .cute-input:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+            background: white;
+        }
+
+        /* 愿望清单滚动条 */
+        .wishlist-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .wishlist-container::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 10px;
+        }
+
+        /* 动画小点 */
+        .live-pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--candy-pink);
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-12">
+
+    <header class="max-w-7xl mx-auto flex justify-between items-center mb-16">
+        <div class="flex items-center gap-3">
+            <div class="bg-[#156BFF] w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg rotate-3">
+                <i data-lucide="calculator" class="fill-current"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tighter">PAYFLOW</h1>
+                <p class="text-[10px] font-bold text-[#8A96A8] tracking-widest">REAL-TIME EARNINGS</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+             <div class="w-12 h-12 rounded-full bg-white border-4 border-white shadow-md overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Lucky" alt="avatar">
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 pt-8">
+        
+        <div class="card-wrapper">
+            <div class="game-card">
+                <div class="badge-circle bg-[#FF6FAE]">
+                    <i data-lucide="user-plus" class="text-white w-10 h-10"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="text-center font-bold text-[#8A96A8] mb-6 tracking-widest">SETUP PROFILE</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-xs font-bold mb-2 ml-2">MONTHLY SALARY / 月薪</label>
+                            <input type="number" id="monthlySalary" class="cute-input text-2xl" value="20000">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-2 ml-2">DAILY HOURS / 工作时长</label>
+                            <input type="number" id="workHours" class="cute-input" value="8">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold mb-2 ml-2">WORK DAYS / 每月天数</label>
+                            <div class="flex gap-2">
+                                <button class="flex-1 py-2 rounded-xl bg-[#156BFF] text-white font-bold shadow-md">21.75</button>
+                                <button class="flex-1 py-2 rounded-xl bg-gray-100 text-[#8A96A8] font-bold">22</button>
+                                <button class="flex-1 py-2 rounded-xl bg-gray-100 text-[#8A96A8] font-bold">30</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-ribbon bg-[#FF6FAE] text-white font-bold text-xl tracking-tight">
+                    Set Info Mode
+                </div>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="game-card" style="border-color: #156BFF;">
+                <div class="badge-circle bg-[#156BFF]">
+                    <i data-lucide="zap" class="text-white w-10 h-10 fill-current"></i>
+                </div>
+                <div class="card-content justify-center items-center">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="live-pulse"></div>
+                        <span class="font-bold text-[#156BFF] tracking-widest">EARNING LIVE</span>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-7xl font-bold block mb-2" id="currentPerSecond">¥ 0.35</span>
+                        <span class="bg-[#EAF6FF] text-[#156BFF] px-4 py-1 rounded-full font-bold text-sm">每秒收入 / PER SEC</span>
+                    </div>
+                    
+                    <div class="w-full mt-12 space-y-4">
+                        <div class="flex justify-between bg-blue-50 p-4 rounded-2xl border-2 border-dashed border-blue-200">
+                            <span class="font-bold text-[#8A96A8]">每分钟</span>
+                            <span class="font-bold text-[#156BFF]" id="currentPerMinute">¥ 21.00</span>
+                        </div>
+                        <div class="flex justify-between bg-blue-50 p-4 rounded-2xl border-2 border-dashed border-blue-200">
+                            <span class="font-bold text-[#8A96A8]">每小时</span>
+                            <span class="font-bold text-[#156BFF]" id="currentPerHour">¥ 1,260.00</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-ribbon bg-[#156BFF] text-white font-bold text-xl tracking-tight">
+                    Realtime Mode
+                </div>
+            </div>
+        </div>
+
+        <div class="card-wrapper">
+            <div class="game-card">
+                <div class="badge-circle bg-[#FFD84D]">
+                    <i data-lucide="shopping-cart" class="text-[#102A5C] w-10 h-10"></i>
+                </div>
+                <div class="card-content">
+                    <h2 class="text-center font-bold text-[#8A96A8] mb-6 tracking-widest">DREAM LIST</h2>
+                    <div class="wishlist-container space-y-4 overflow-y-auto pr-2">
+                        <div class="bg-orange-50 p-4 rounded-2xl relative overflow-hidden group">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold">🧋 霸气葡萄奶茶</span>
+                                <span class="text-sm font-bold text-orange-400">¥ 28</span>
+                            </div>
+                            <div class="text-[10px] font-bold text-gray-400">剩余时间: <span class="text-orange-500 countdown" data-price="28">00:01:20</span></div>
+                            <div class="absolute bottom-0 left-0 h-1 bg-orange-200 w-2/3"></div>
+                        </div>
+                        <div class="bg-pink-50 p-4 rounded-2xl relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold">🍱 豪华双层午餐</span>
+                                <span class="text-sm font-bold text-pink-400">¥ 65</span>
+                            </div>
+                            <div class="text-[10px] font-bold text-gray-400">剩余时间: <span class="text-pink-500 countdown" data-price="65">00:03:05</span></div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-2xl relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold">🎮 怪物猎人: 荒野</span>
+                                <span class="text-sm font-bold text-blue-400">¥ 348</span>
+                            </div>
+                            <div class="text-[10px] font-bold text-gray-400">剩余时间: <span class="text-blue-500 countdown" data-price="348">01:45:00</span></div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-2xl relative overflow-hidden">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold">🧥 潮牌联名卫衣</span>
+                                <span class="text-sm font-bold text-purple-400">¥ 899</span>
+                            </div>
+                            <div class="text-[10px] font-bold text-gray-400">剩余时间: <span class="text-purple-500 countdown" data-price="899">04:12:30</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="banner-ribbon bg-[#FFD84D] text-[#102A5C] font-bold text-xl tracking-tight">
+                    Shopping Mode
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="max-w-7xl mx-auto mt-16 text-center text-[#8A96A8] text-sm font-bold">
+        <p>B BACK <span class="mx-4">|</span> A SELECT</p>
+    </footer>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        const salaryInput = document.getElementById('monthlySalary');
+        const hourInput = document.getElementById('workHours');
+        const perSecondEl = document.getElementById('currentPerSecond');
+        const perMinuteEl = document.getElementById('currentPerMinute');
+        const perHourEl = document.getElementById('currentPerHour');
+        const countdowns = document.querySelectorAll('.countdown');
+
+        function updateCalculations() {
+            const salary = parseFloat(salaryInput.value) || 0;
+            const hoursPerDay = parseFloat(hourInput.value) || 8;
+            const daysPerMonth = 21.75; // 标准工时天数
+
+            // 每秒工资 = 月薪 / (天数 * 小时 * 3600)
+            const perSec = salary / (daysPerMonth * hoursPerDay * 3600);
+            const perMin = perSec * 60;
+            const perHour = perSec * 3600;
+
+            // 更新中间卡片
+            perSecondEl.innerText = `¥ ${perSec.toFixed(3)}`;
+            perMinuteEl.innerText = `¥ ${perMin.toFixed(2)}`;
+            perHourEl.innerText = `¥ ${perHour.toFixed(2)}`;
+
+            // 更新右侧愿望清单倒计时
+            countdowns.forEach(el => {
+                const price = parseFloat(el.getAttribute('data-price'));
+                const totalSecondsNeeded = price / perSec;
+                el.innerText = formatTime(totalSecondsNeeded);
+            });
+        }
+
+        function formatTime(seconds) {
+            if (!isFinite(seconds)) return "∞";
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = Math.floor(seconds % 60);
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        salaryInput.addEventListener('input', updateCalculations);
+        hourInput.addEventListener('input', updateCalculations);
+
+        // 初始执行一次
+        updateCalculations();
+    </script>
+</body>
+</html>
