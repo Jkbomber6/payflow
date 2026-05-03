@@ -422,16 +422,7 @@
     }
 
     .folder-inner::before {
-      content: "";
-      position: absolute;
-      left: 24px;
-      top: -4px;
-      width: 118px;
-      height: 28px;
-      border: 4px solid var(--white);
-      border-bottom: 0;
-      border-radius: 20px 20px 0 0;
-      background: inherit;
+      content: none;
     }
 
     .folder-card.active {
@@ -442,25 +433,12 @@
 
     .folder-card.active .folder-inner {
       min-height: 276px;
-      background:
-        radial-gradient(circle at 84% 20%, rgba(255,255,255,0.18) 0 54px, transparent 55px),
-        linear-gradient(160deg, #2a7dff 0%, var(--blue) 68%, #0d58e6 100%);
+      background: var(--blue);
       box-shadow: var(--shadow-blue);
     }
 
     .folder-card.active .folder-inner::after {
-      content: "已选择";
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 7px 12px;
-      border: 3px solid var(--white);
-      border-radius: 999px;
-      color: var(--white);
-      background: var(--pink);
-      box-shadow: 0 5px 0 rgba(16, 42, 92, 0.15);
-      font-size: 0.78rem;
-      font-weight: 1000;
+      content: none;
     }
 
     .folder-head {
@@ -914,11 +892,40 @@
     .goal-price {
       position: absolute;
       top: 16px;
-      right: 14px;
+      right: 52px;
       z-index: 1;
       color: var(--blue);
       font-size: 0.88rem;
       font-weight: 1000;
+    }
+
+    .delete-goal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 2;
+      display: grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border: 3px solid var(--white);
+      border-radius: 50%;
+      color: var(--white);
+      background: var(--pink);
+      box-shadow: 0 4px 0 rgba(180, 45, 100, 0.34);
+      font-size: 1rem;
+      font-weight: 1000;
+      line-height: 1;
+      transition: transform 160ms ease, box-shadow 160ms ease;
+    }
+
+    .delete-goal:hover {
+      transform: translateY(-2px);
+    }
+
+    .delete-goal:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 rgba(180, 45, 100, 0.34);
     }
 
     .small-meter {
@@ -1141,7 +1148,7 @@
         <span class="pill">实时计算 / REAL-TIME</span>
         <h1>SALARY<br>/ SECOND</h1>
         <h2>实时记录每秒工资</h2>
-        <p>输入你的月薪、上班时间和每月工时，把一天的工作进度变成一个可爱的工资游戏存档。</p>
+        <p>输入你的月薪、上班时间和每月工时，实时计算收入和购买力。</p>
       </div>
 
       <aside class="live-rate" aria-label="今日收入卡片">
@@ -1311,14 +1318,14 @@
     ];
 
     const defaultGoals = [
-      { name: "奶茶徽章", price: 15, icon: "🥤", bg: "#fff4d8" },
-      { name: "午饭补给", price: 30, icon: "🍱", bg: "#eaf6ff" },
-      { name: "打车券", price: 50, icon: "🚕", bg: "#ffe6ef" },
+      { name: "一点点", price: 15, icon: "🥤", bg: "#fff4d8" },
+      { name: "午饭", price: 30, icon: "🍱", bg: "#eaf6ff" },
+      { name: "打车", price: 50, icon: "🚕", bg: "#ffe6ef" },
       { name: "会员卡", price: 68, icon: "🎬", bg: "#e9fff6" },
-      { name: "游戏补给", price: 198, icon: "🎮", bg: "#eef0ff" },
+      { name: "游戏", price: 198, icon: "🎮", bg: "#eef0ff" },
       { name: "漂亮衣服", price: 300, icon: "👕", bg: "#fff4d8" },
-      { name: "房租堡垒", price: 3000, icon: "🏠", bg: "#eaf6ff" },
-      { name: "旅行岛屿", price: 5000, icon: "🏝️", bg: "#ffe6ef" }
+      { name: "房租", price: 600, icon: "🏠", bg: "#eaf6ff" },
+      { name: "旅行", price: 5000, icon: "🏝️", bg: "#ffe6ef" }
     ];
 
     let goals = [...defaultGoals];
@@ -1519,7 +1526,7 @@
       goalsGrid.innerHTML = "";
       let nextGoal = null;
 
-      goals.forEach((goal) => {
+      goals.forEach((goal, index) => {
         const progress = clamp((earned / goal.price) * 100, 0, 100);
         const unlocked = progress >= 100;
         const remaining = Math.max(0, goal.price - earned);
@@ -1529,6 +1536,7 @@
         card.className = `goal-card ${unlocked ? "" : "locked"}`;
         card.style.setProperty("--goal-bg", goal.bg || "#fff4d8");
         card.innerHTML = `
+          <button class="delete-goal" type="button" data-goal-index="${index}" aria-label="删除 ${goal.name}">×</button>
           <div class="goal-price">${money(goal.price, 0)}</div>
           <div class="goal-icon" aria-hidden="true">${goal.icon}</div>
           <h4>${goal.name}</h4>
@@ -1609,6 +1617,22 @@
         refreshUnlocks();
         scheduleSave();
       });
+    });
+
+    $("goalsGrid").addEventListener("pointerdown", (event) => {
+      const button = event.target.closest(".delete-goal");
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      const index = Number(button.dataset.goalIndex);
+      const removed = goals[index];
+      if (!removed) return;
+
+      goals.splice(index, 1);
+      refreshUnlocks();
+      scheduleSave();
+      showToast(`已删除奖励：${removed.name}`);
     });
 
     $("startButton").addEventListener("click", () => {
